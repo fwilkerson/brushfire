@@ -1,28 +1,29 @@
+import compression from 'compression';
+import express from 'express';
+import fs from 'fs';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import path from 'path';
+import webpack from 'webpack';
+import webpackMiddleware from 'webpack-dev-middleware';
+
+import webpackConfig from '../webpack.config';
+import {renderHTML} from './lib';
+import {initialModel} from './model';
 import {indexPage} from './views';
-import {renderToString} from './lib';
 
-const renderPage = page => `
-	<!DOCTYPE html>
-	<html lang="en">
+const server = express();
 
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta http-equiv="X-UA-Compatible" content="ie=edge">
-		<title>brushfire</title>
-	</head>
+server.use(webpackMiddleware(webpack(webpackConfig)));
 
-	<body>
-		<div id="root">${renderToString(page)}</div>
-	</body>
+server.use(compression());
+server.use(express.static('public'));
+server.use(helmet());
+server.use(morgan('dev'));
 
-	</html>
-`;
+server.get('*', async (request, response) => {
+	const html = renderHTML(indexPage(initialModel));
+	return response.send(html);
+});
 
-export default async (request, response) => {
-	const model = {
-		title: 'Hello, JSX',
-		todos: ['Shit', 'Stuff', 'Things'],
-	};
-	return renderPage(indexPage(model));
-};
+server.listen(process.env.PORT || 8080);

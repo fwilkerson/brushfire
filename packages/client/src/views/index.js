@@ -1,6 +1,6 @@
-import {commandTypes} from '../../../lib';
 import {h} from '../lib/muve';
 import {getModel, setModel} from '../model';
+import {commandTypes} from '../../../shared';
 
 function setCreatePollForm(partial, updateType) {
 	const {createPollForm} = getModel();
@@ -23,6 +23,11 @@ function updatePollOptions(pollOption, index) {
 	});
 }
 
+function addNewPollOption() {
+	const {createPollForm} = getModel();
+	setCreatePollForm({pollOptions: createPollForm.pollOptions.concat('')});
+}
+
 function createPoll() {
 	const {createPollForm} = getModel();
 	const command = {
@@ -40,46 +45,51 @@ function createPoll() {
 		.catch(console.error);
 }
 
-export const indexPage = ({createPollForm}) => (
-	<main class="container" style={{paddingTop: '10vh'}}>
-		<h4 style={{textAlign: 'center'}}>Brushfire</h4>
+export const indexPage = ({createPollForm}) => [
+	<h4 style={{color: 'red', textAlign: 'center'}}>Brushfire</h4>,
+	<div class="row">
+		<div class="columns eight offset-by-two">
+			<input
+				type="text"
+				class="u-full-width"
+				style={{fontSize: '2.5rem', height: '5rem'}}
+				placeholder="Type the poll question here..."
+				value={createPollForm.pollQuestion}
+				onInput={e => updatePollQuestion(e.target.value)}
+			/>
+		</div>
+	</div>,
+	...createPollForm.pollOptions.map((option, i) => (
 		<div class="row">
 			<div class="columns eight offset-by-two">
+				<span style={{paddingTop: '1rem', position: 'fixed'}}>{i + 1}.</span>
 				<input
 					type="text"
 					class="u-full-width"
-					style={{fontSize: '2.5rem', height: '5rem'}}
-					placeholder="Type the poll question here..."
-					value={createPollForm.pollQuestion}
-					onInput={e => updatePollQuestion(e.target.value)}
+					style={{
+						borderRadius: '0',
+						borderWidth: '0 0 1px 0',
+						paddingLeft: '2rem',
+					}}
+					value={option}
+					placeholder="poll option..."
+					onInput={e => updatePollOptions(e.target.value, i)}
 				/>
 			</div>
 		</div>
-		{createPollForm.pollOptions.map((option, i) => (
-			<div class="row">
-				<div class="columns eight offset-by-two">
-					<span style={{paddingTop: '1rem', position: 'fixed'}}>{i + 1}.</span>
-					<input
-						type="text"
-						class="u-full-width"
-						style={{
-							borderRadius: '0',
-							borderWidth: '0 0 1px 0',
-							paddingLeft: '2rem',
-						}}
-						value={option}
-						placeholder="poll option..."
-						onInput={e => updatePollOptions(e.target.value, i)}
-					/>
-				</div>
-			</div>
-		))}
-		<div class="row">
-			<div class="columns eight offset-by-two">
-				<button onClick={createPoll} class="button-primary u-pull-right">
-					Create Poll
-				</button>
-			</div>
+	)),
+	<div class="row">
+		<div class="columns eight offset-by-two">
+			<a style={{cursor: 'pointer'}} onClick={addNewPollOption}>
+				Add new poll option
+			</a>
 		</div>
-	</main>
-);
+	</div>,
+	<div class="row">
+		<div class="columns eight offset-by-two">
+			<button onClick={createPoll} class="button-primary u-pull-right">
+				Create Poll
+			</button>
+		</div>
+	</div>,
+];

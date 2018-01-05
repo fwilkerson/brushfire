@@ -92,14 +92,25 @@ function muve(view, init, target, hydrate = false) {
 
 	render = model => {
 		let temp = view(model);
-		patch(target, temp, prev);
+		if (Array.isArray(temp)) {
+			temp.forEach((node, i) => patch(target, node, prev[i], i));
+		} else patch(target, temp, prev);
+
 		prev = temp;
 	};
 
 	prev = view(init);
-	patch(target, prev, hydrate && prev);
 
-	if (hydrate) hydrateAttributes(target, prev);
+	// Do we even need to patch when hydrating?
+	if (Array.isArray(prev)) {
+		prev.forEach((node, i) => patch(target, node, hydrate && node, i));
+	} else patch(target, prev, hydrate && prev);
+
+	if (hydrate) {
+		if (Array.isArray(prev)) {
+			prev.forEach((node, i) => hydrateAttributes(target, node, i));
+		} else hydrateAttributes(target, prev);
+	}
 }
 
 function interact(model, log) {

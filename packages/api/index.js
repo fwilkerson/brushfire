@@ -2,7 +2,7 @@ const config = require('dotenv').config();
 const {json, send} = require('micro');
 const uuid = require('uuid/v4');
 
-const {commandTypes, eventTypes} = require('../lib');
+const {commandTypes, eventTypes} = require('../shared');
 const {appendEvent, getEvents} = require('./db');
 
 // Blow the service up if there is an env config error

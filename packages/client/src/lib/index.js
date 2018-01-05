@@ -48,6 +48,11 @@ export const renderHTML = vdom => `
 		<link rel="stylesheet" href="normalize.css">
 		<link rel="stylesheet" href="skeleton.css">
 		<link rel="icon" type="image/png" href="favicon.png">
+		<style>
+			#root {
+				padding-top: 10vh;
+			}
+		</style>
 	</head>
 
 	<body>

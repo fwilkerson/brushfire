@@ -4,6 +4,13 @@
 	"main": "index.js",
 	"license": "MIT",
 	"devDependencies": {
+		"concurrently": "^3.5.1",
 		"prettier": "^1.9.2"
+	},
+	"scripts": {
+		"run-api": "cd packages/api && yarn dev",
+		"run-client": "cd packages/client && yarn start",
+		"start":
+			"concurrently -n \"API,CLIENT\" -c \"magenta,cyan\" \"yarn run-api\" \"yarn run-client\""
 	}
 }

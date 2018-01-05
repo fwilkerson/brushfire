@@ -1,0 +1,21 @@
+{
+	"name": "brushfire-client",
+	"version": "1.0.0",
+	"main": "index.js",
+	"license": "MIT",
+	"devDependencies": {
+		"babel-cli": "^6.26.0",
+		"babel-plugin-transform-react-jsx": "^6.24.1",
+		"babel-preset-env": "^1.6.1",
+		"micro-dev": "^2.1.2"
+	},
+	"dependencies": {
+		"babel-register": "^6.26.0",
+		"micro": "^9.0.2",
+		"muve": "^1.0.0"
+	},
+	"scripts": {
+		"start": "micro",
+		"dev": "micro-dev"
+	}
+}

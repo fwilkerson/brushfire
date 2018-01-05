@@ -40,10 +40,14 @@ export const renderHTML = vdom => `
 	<html lang="en">
 
 	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta http-equiv="X-UA-Compatible" content="ie=edge">
-		<title>brushfire</title>
+		<meta charset="utf-8">
+		<title>brushfire</title>	
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="normalize.css">
+		<link rel="stylesheet" href="skeleton.css">
+		<link rel="icon" type="image/png" href="favicon.png">
 	</head>
 
 	<body>

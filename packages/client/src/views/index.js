@@ -1,13 +1,11 @@
-import {h} from 'muve';
+import {h} from '../lib/muve';
 
 export const indexPage = model => (
 	<main class="title">
 		<h2>{model.title}</h2>
 		<ul>
 			{model.todos.map(todo => (
-				<li style={{color: 'green'}} onClick={() => console.log('hit')}>
-					{todo}
-				</li>
+				<li onClick={() => console.log(`clicked ${todo}`)}>{todo}</li>
 			))}
 		</ul>
 	</main>

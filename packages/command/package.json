@@ -1,5 +1,5 @@
 {
-	"name": "brushfire-api",
+	"name": "brushfire-command",
 	"version": "1.0.0",
 	"main": "index.js",
 	"license": "MIT",

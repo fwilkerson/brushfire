@@ -34,7 +34,6 @@ const dealer = zmq.socket('dealer');
 
 subscriber.on('message', (topic, message) => {
 	const event = JSON.parse(message);
-	console.info(event);
 	state = eventHandler(state, event);
 });
 subscriber.connect(process.env.EVENT_STORE_PUB_SUB);
@@ -42,7 +41,6 @@ subscriber.subscribe(''); // subscribe to all topics
 
 dealer.on('message', snapshot => {
 	const events = JSON.parse(snapshot);
-	console.info(events);
 	state = events.reduce(eventHandler, state);
 });
 try {

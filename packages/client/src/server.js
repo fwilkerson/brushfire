@@ -13,9 +13,7 @@ import {indexPage} from './views';
 const server = express();
 
 server.use(compression());
-server.use(
-	webpackMiddleware(webpack(webpackConfig), {stats: {colors: true}, hot: true})
-);
+server.use(webpackMiddleware(webpack(webpackConfig), {stats: {colors: true}}));
 server.use(express.static('public'));
 server.use(helmet());
 

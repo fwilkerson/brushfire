@@ -12,9 +12,17 @@ if (config.error) {
 }
 
 const publisher = zmq.socket('pub');
-publisher.bindSync(process.env.EVENT_STORE_PUB_SUB);
+try {
+	// wrap in try catch for dev mode reload
+	publisher.bindSync(process.env.EVENT_STORE_PUB_SUB);
+} catch (e) {}
 
 const router = zmq.socket('router');
+router.on('message', async (envelope, data) => {
+	const {eventId} = JSON.parse(data);
+	const events = await getEvents({eventId});
+	router.send([envelope, JSON.stringify(events)]);
+});
 router.connect(process.env.EVENT_STORE_SYNCHRONIZE);
 
 const commands = {
@@ -59,3 +67,7 @@ module.exports = async (request, response) => {
 	const [statusCode, data] = await routeCommand(command);
 	send(response, statusCode, data);
 };
+
+process.on('SIGINT', () => {
+	publisher.close();
+});

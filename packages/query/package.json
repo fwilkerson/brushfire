@@ -12,7 +12,7 @@
 		"zeromq": "^4.6.0"
 	},
 	"scripts": {
-		"start": "micro",
-		"dev": "micro-dev"
+		"start": "micro -p 3302",
+		"dev": "micro-dev -p 3302"
 	}
 }

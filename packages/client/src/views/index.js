@@ -46,7 +46,7 @@ function createPoll() {
 }
 
 export const indexPage = ({createPollForm}) => [
-	<h4 style={{color: 'red', textAlign: 'center'}}>Brushfire</h4>,
+	<h4 style={{textAlign: 'center'}}>Brushfire</h4>,
 	<div class="row">
 		<div class="columns eight offset-by-two">
 			<input

@@ -53,6 +53,7 @@ function routeCommand({type, payload}) {
 	});
 }
 
+// TODO: Error handling and rejecting bad requests
 module.exports = async (request, response) => {
 	const command = await json(request);
 	const [statusCode, data] = await routeCommand(command);

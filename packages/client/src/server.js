@@ -19,7 +19,13 @@ server.use(
 server.use(express.static('public'));
 server.use(helmet());
 
-server.use('/api', proxy({target: 'http://localhost:3000'}));
+// TODO: Put the api addresses into env variable
+
+// Command api
+server.use('/api/command', proxy({target: 'http://localhost:3301'}));
+
+// Query api
+server.use('/api', proxy({target: 'http://localhost:3302'}));
 
 server.get('*', async (request, response) => {
 	const html = renderHTML(indexPage(initialModel));

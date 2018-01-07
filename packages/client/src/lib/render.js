@@ -46,6 +46,7 @@ export const renderHTML = (vdom, serverModel) => {
 	<html lang="en">
 
 	<head>
+		<base href="/">
 		<meta charset="utf-8">
 		<title>brushfire</title>	
 		<meta name="description" content="">

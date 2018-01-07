@@ -87,26 +87,19 @@ function patchAttributes(node, curr, prev) {
 
 let render = () => {};
 
-function muve(view, init, target, hydrate = false) {
+function muve(view, init, target, hydrate) {
 	let prev;
 
 	render = model => {
 		let temp = view(model);
-		if (!Array.isArray(temp)) temp = [temp];
-		temp = [].concat.apply([], temp);
-		temp.forEach((node, i) => patch(target, node, prev[i], i));
+		patch(target, temp, prev);
 		prev = temp;
 	};
 
 	prev = view(init);
-	if (!Array.isArray(prev)) prev = [prev];
-	prev = [].concat.apply([], prev);
 
-	if (hydrate) {
-		prev.forEach((node, i) => hydrateAttributes(target, node, i));
-	} else {
-		prev.forEach((node, i) => patch(target, node, node, i));
-	}
+	if (hydrate) hydrateAttributes(target, prev);
+	else patch(target, prev);
 }
 
 function interact(model, log) {

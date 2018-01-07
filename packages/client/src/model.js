@@ -11,6 +11,11 @@ export const initialModel = {
 
 export const {getModel, setModel} = interact(initialModel, console.info);
 
+const isPathAlreadySelected = path => {
+	const {route} = getModel();
+	return path === route.path;
+};
+
 export const setRoute = path => {
 	if (isPathAlreadySelected(path)) return;
 

@@ -29,7 +29,20 @@ server.use('/api/command', proxy({target: 'http://localhost:3301'}));
 // Query api
 server.use('/api', proxy({target: 'http://localhost:3302'}));
 
-server.get('*', async (request, response) => {
+server.get('/poll/:id', async (request, response) => {
+	const viewPollResultPage = require('./views/view_poll_result').default;
+
+	const serverView = renderToString(viewPollResultPage(initialModel));
+
+	const model = Object.assign({}, initialModel, {
+		serverViewName: 'view_poll_result',
+		serverView,
+	});
+	const html = renderHTML(shell(model), model);
+	return response.send(html);
+});
+
+server.get('/*', async (request, response) => {
 	const createPollPage = require('./views/create_poll').default;
 
 	const serverView = renderToString(

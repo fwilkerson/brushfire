@@ -39,7 +39,10 @@ exports.commandHandlers = (appendEvent, publisher) => ({
 		const event = await appendEvent({
 			aggregateId,
 			type: eventTypes.POLL_CREATED,
-			payload,
+			payload: {
+				pollOptions: pollOptions.filter(option => !isNullOrWhiteSpace(option)),
+				pollQuestion,
+			},
 		});
 
 		// Step 5. Publish POLL_CREATED event

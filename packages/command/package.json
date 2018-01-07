@@ -17,7 +17,7 @@
 	},
 	"scripts": {
 		"start": "micro -p 3301",
-		"dev": "micro-dev -p 3301",
+		"dev": "micro-dev -p 3301 -c",
 		"tdd": "ava -w -v --fail-fast"
 	}
 }

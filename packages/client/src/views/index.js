@@ -23,7 +23,7 @@ const asynViewPollResult = model => (
 	<AsyncView
 		{...getDefaultProps(model)}
 		importView={() => import('./view_poll_result')}
-		model={model}
+		model={model.viewPollResult}
 	/>
 );
 

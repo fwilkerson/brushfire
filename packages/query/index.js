@@ -4,6 +4,7 @@ const {parse} = require('url');
 const zmq = require('zeromq');
 
 const {eventTypes} = require('../shared');
+const {syncWithEventBus} = require('./adapter');
 
 // Blow the service up if there is an env config error
 if (config.error) {
@@ -13,11 +14,15 @@ if (config.error) {
 let state = {};
 
 const eventHandlers = {
-	[eventTypes.POLL_CREATED]: (state, {aggregateId, payload}) => {
+	[eventTypes.POLL_CREATED]: (state, event) => {
+		const {aggregate_id, event_id, created_at, payload} = event;
 		return Object.assign({}, state, {
-			[aggregateId]: {
+			[aggregate_id]: {
+				id: aggregate_id,
+				version: event_id,
 				pollQuestion: payload.pollQuestion,
 				pollOptions: payload.pollOptions,
+				createdAt: created_at,
 			},
 		});
 	},
@@ -30,31 +35,32 @@ function eventHandler(state, event) {
 }
 
 const subscriber = zmq.socket('sub');
-const dealer = zmq.socket('dealer');
 
 subscriber.on('message', (topic, message) => {
-	const event = JSON.parse(message);
-	state = eventHandler(state, event);
+	const events = JSON.parse(message);
+	state = events.reduce(eventHandler, state);
 });
 subscriber.connect(process.env.EVENT_STORE_PUB_SUB);
 subscriber.subscribe(''); // subscribe to all topics
 
-dealer.on('message', snapshot => {
+syncWithEventBus(0, snapshot => {
 	const events = JSON.parse(snapshot);
 	state = events.reduce(eventHandler, state);
 });
-try {
-	// wrap in try catch for dev mode reload
-	dealer.bindSync(process.env.EVENT_STORE_SYNCHRONIZE);
-} catch (e) {}
-dealer.send(JSON.stringify({eventId: 0}));
 
 module.exports = async (request, response) => {
 	// TODO: Check request method, route url's to functions, handle errors
 	const {pathname, query} = parse(request.url, true);
-	send(response, 200, state[query.aggregateId]);
-};
 
-process.on('SIGINT', () => {
-	dealer.close();
-});
+	let result = [];
+	switch (pathname) {
+		case '/api/poll':
+			result = state[query.id]
+				? [200, state[query.id]]
+				: [404, {error: `No poll with with the given id (${query.id})`}];
+		default:
+			// TODO: Throw error
+			break;
+	}
+	send(response, ...result);
+};

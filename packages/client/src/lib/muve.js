@@ -62,7 +62,7 @@ function patch(node, curr, prev, index) {
 
 	if (!prev && curr) {
 		node.appendChild(createNode(curr));
-	} else if (!curr) {
+	} else if (curr == null) {
 		node.removeChild(child);
 	} else if (
 		typeof curr !== typeof prev ||
@@ -106,6 +106,8 @@ function interact(model, log) {
 	return {
 		getModel: () => model,
 		setModel: (update, name) => {
+			// we could avoid the render if nothing changed on the model
+			// question is which is more expensive
 			model = Object.assign({}, model, update);
 			render(model);
 			if (log && name) log(name, update);

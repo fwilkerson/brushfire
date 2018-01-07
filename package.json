@@ -8,10 +8,8 @@
 		"prettier": "^1.9.2"
 	},
 	"scripts": {
-		"run-client": "cd packages/client && yarn start",
-		"run-command-api": "cd packages/command && yarn dev",
-		"run-query-api": "cd packages/query && yarn dev",
-		"start":
-			"concurrently -n \"CLIENT,COMMAND,QUERY\" -c \"cyan,magenta,green\" \"yarn run-client\" \"yarn run-command-api\" \"yarn run-query-api\""
+		"start-client": "cd packages/client && yarn start",
+		"start-api":
+			"concurrently -k -n \"COMMAND,QUERY\" -c \"cyan,magenta\" \"cd packages/command && yarn dev\" \"cd packages/query && yarn dev\""
 	}
 }

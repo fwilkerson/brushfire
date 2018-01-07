@@ -1,5 +1,6 @@
 import compression from 'compression';
 import express from 'express';
+import fetch from 'node-fetch';
 import helmet from 'helmet';
 import proxy from 'http-proxy-middleware';
 import webpack from 'webpack';
@@ -13,11 +14,7 @@ import {shell} from './views';
 const server = express();
 
 server.use(compression());
-server.use(
-	webpackMiddleware(webpack(webpackConfig), {
-		noInfo: true,
-	})
-);
+server.use(webpackMiddleware(webpack(webpackConfig), {stats: {colors: true}}));
 server.use(express.static('public'));
 server.use(helmet());
 
@@ -32,11 +29,18 @@ server.use('/api', proxy({target: 'http://localhost:3302'}));
 server.get('/poll/:id', async (request, response) => {
 	const viewPollResultPage = require('./views/view_poll_result').default;
 
-	const serverView = renderToString(viewPollResultPage(initialModel));
+	const data = await fetch(
+		`http://localhost:3302/api/poll?id=${request.params.id}`
+	);
+	const poll = await data.json();
+	const {viewPollResult} = initialModel;
+	viewPollResult.poll = poll;
+	const serverView = renderToString(viewPollResultPage(viewPollResult));
 
 	const model = Object.assign({}, initialModel, {
 		serverViewName: 'view_poll_result',
 		serverView,
+		viewPollResult,
 	});
 	const html = renderHTML(shell(model), model);
 	return response.send(html);

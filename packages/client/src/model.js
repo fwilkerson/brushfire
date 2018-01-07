@@ -5,11 +5,18 @@ export const initialModel = {
 		pollQuestion: '',
 		pollOptions: ['', '', ''],
 	},
+	viewPollResult: {poll: {pollQuestion: '', pollOptions: []}},
 	activeView: null,
-	route: {path: '/'},
+	route: getInitialRoute(),
 };
 
 export const {getModel, setModel} = interact(initialModel, console.info);
+
+function getInitialRoute() {
+	if (typeof window === 'undefined') {
+		return {path: '/'};
+	} else return history.state || {path: window.location.pathname};
+}
 
 const isPathAlreadySelected = path => {
 	const {route} = getModel();

@@ -20,7 +20,7 @@
 		"helmet": "^3.9.0",
 		"http-proxy-middleware": "^0.17.4",
 		"morgan": "^1.9.0",
-		"muve": "^1.0.0"
+		"node-fetch": "^1.7.3"
 	},
 	"scripts": {
 		"start": "nodemon index.js"

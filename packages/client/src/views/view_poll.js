@@ -1,5 +1,5 @@
 import {h} from '../lib/muve';
-
+import {joinChannel, leaveChannel} from '../lib/socket';
 import {getModel, setModel} from '../model';
 
 function setViewPoll(partial, updateType) {
@@ -8,25 +8,38 @@ function setViewPoll(partial, updateType) {
 }
 
 export function didMount() {
-	// Setup socket io subscription for givin aggregateId (poll id)
 	const {route, viewPoll} = getModel();
 
 	if (route) {
 		const {path} = route;
 		const id = path.slice(path.lastIndexOf('/') + 1);
 
+		// tell web socket we want messages for this poll id
+		joinChannel(id);
+
+		// Don't query if socket already got the data?
 		if (viewPoll.poll.id !== id) {
 			// there's a chance that this completes before the poll is created
-			// look for a solution to this with the websocket
 			fetch(`/api/poll?id=${id}`)
 				.then(response => response.json())
-				.then(poll => {
-					console.log(getModel());
-					setViewPoll({poll});
+				.then(data => {
+					if (data.error) {
+					} else setViewPoll({poll: data});
 				})
 				.catch(console.error);
 		}
 	}
+}
+
+export function didUnmount() {
+	const {viewPoll} = getModel();
+
+	if (viewPoll.poll.id) {
+		leaveChannel(viewPoll.poll.id);
+	}
+
+	// reset to initial state
+	setViewPoll({pollQuestion: '', pollOptions: []});
 }
 
 export default ({poll}) => (

@@ -41,8 +41,11 @@ function createPoll() {
 		body: JSON.stringify(command),
 	})
 		.then(response => response.json())
-		.then(result => {
-			setRoute('/poll/' + result.aggregateId);
+		.then(data => {
+			if (data.error) {
+			} else {
+				setRoute('/poll/' + data.aggregateId);
+			}
 		})
 		.catch(console.error);
 }

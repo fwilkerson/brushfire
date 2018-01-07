@@ -25,6 +25,7 @@ server.use('/api/command', proxy({target: 'http://localhost:3301'}));
 
 // Query api
 server.use('/api', proxy({target: 'http://localhost:3302'}));
+server.use('/socket.io', proxy({target: 'http://localhost:3302', ws: true}));
 
 server.get('/poll/:id', async (request, response) => {
 	const viewPollPage = require('./views/view_poll').default;

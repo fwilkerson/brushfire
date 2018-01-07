@@ -9,7 +9,7 @@ exports.appendEvent = async ({aggregateId, type, payload}) => {
 		type,
 		JSON.stringify(payload),
 	]);
-	return rows;
+	return rows[0];
 };
 
 const getEventsQuery = `SELECT * FROM event WHERE event_id > $1 ORDER BY event_id`;

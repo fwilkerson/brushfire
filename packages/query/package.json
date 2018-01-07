@@ -9,10 +9,11 @@
 	"dependencies": {
 		"dotenv": "^4.0.0",
 		"micro": "^9.0.2",
+		"socket.io": "^2.0.4",
 		"zeromq": "^4.6.0"
 	},
 	"scripts": {
 		"start": "micro -p 3302",
-		"dev": "micro-dev -p 3302 -c"
+		"dev": "node index"
 	}
 }

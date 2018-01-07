@@ -2,6 +2,8 @@ import muve from './lib/muve';
 
 import {getModel, initialModel, setActiveView, setModel} from './model';
 import {shell} from './views';
+import {connectSocket} from './lib/socket';
+import {eventTypes} from '../../shared';
 
 const preloadedModel = window.__PRELOADED_STATE__ || initialModel;
 
@@ -13,6 +15,8 @@ function renderAsyncView(result) {
 	setActiveView(result);
 	render(getModel());
 }
+
+connectSocket();
 
 switch (preloadedModel.serverViewName) {
 	case 'create_poll':

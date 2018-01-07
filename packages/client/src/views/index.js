@@ -19,11 +19,11 @@ const asynCreatePoll = model => (
 	/>
 );
 
-const asynViewPollResult = model => (
+const asynViewPoll = model => (
 	<AsyncView
 		{...getDefaultProps(model)}
-		importView={() => import('./view_poll_result')}
-		model={model.viewPollResult}
+		importView={() => import('./view_poll')}
+		model={model.viewPoll}
 	/>
 );
 
@@ -32,7 +32,7 @@ export const shell = model => (
 		<h2 style={{textAlign: 'center'}}>Brushfire</h2>
 		<Router model={model} routeChanged={handleRouteChanged}>
 			<Route exact path="/" view={asynCreatePoll} />
-			<Route path="/poll/:id" view={asynViewPollResult} />
+			<Route path="/poll/:id" view={asynViewPoll} />
 		</Router>
 	</main>
 );

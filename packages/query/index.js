@@ -1,5 +1,6 @@
 const config = require('dotenv').config();
-const micro = require('micro');
+const http = require('http').Server;
+const {send} = require('micro');
 const socketio = require('socket.io');
 const {parse} = require('url');
 const zmq = require('zeromq');
@@ -12,27 +13,9 @@ if (config.error) {
 	throw config.error;
 }
 
-const {send} = micro;
 let state = {};
-
-const server = micro(async (request, response) => {
-	// TODO: Check request method, route url's to functions, handle errors
-	const {pathname, query} = parse(request.url, true);
-
-	let result = [];
-	switch (pathname) {
-		case '/api/poll':
-			result = state[query.id]
-				? [200, state[query.id]]
-				: [404, {error: `No poll with with the given id (${query.id})`}];
-		default:
-			// TODO: Throw error
-			break;
-	}
-	send(response, ...result);
-});
-
-const io = socketio(server);
+const webSocketServer = http((req, res) => {});
+const io = socketio(webSocketServer);
 
 io.sockets.on('connection', function(socket) {
 	socket.on('join channel', function(channel) {
@@ -80,4 +63,21 @@ syncWithEventBus(0, snapshot => {
 	state = events.reduce(eventHandler, state);
 });
 
-server.listen(3302);
+webSocketServer.listen(3303);
+
+module.exports = async (request, response) => {
+	// TODO: Check request method, route url's to functions, handle errors
+	const {pathname, query} = parse(request.url, true);
+
+	let result = [];
+	switch (pathname) {
+		case '/api/poll':
+			result = state[query.id]
+				? [200, state[query.id]]
+				: [404, {error: `No poll with with the given id (${query.id})`}];
+		default:
+			// TODO: Throw error
+			break;
+	}
+	send(response, ...result);
+};

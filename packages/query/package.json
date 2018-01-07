@@ -14,6 +14,6 @@
 	},
 	"scripts": {
 		"start": "micro -p 3302",
-		"dev": "node index"
+		"dev": "micro-dev -p 3302 -c"
 	}
 }

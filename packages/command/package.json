@@ -18,6 +18,6 @@
 	"scripts": {
 		"start": "micro -p 3301",
 		"dev": "micro-dev -p 3301",
-		"test": "ava --watch --verbose --fail-fast"
+		"tdd": "ava -w -v --fail-fast"
 	}
 }

@@ -6,14 +6,18 @@ import webpack from 'webpack';
 import webpackMiddleware from 'webpack-dev-middleware';
 
 import webpackConfig from '../webpack.config';
-import {renderHTML} from './lib';
+import {renderHTML, renderToString} from './lib/render';
 import {initialModel} from './model';
-import {indexPage} from './views';
+import {shell} from './views';
 
 const server = express();
 
 server.use(compression());
-server.use(webpackMiddleware(webpack(webpackConfig), {stats: {colors: true}}));
+server.use(
+	webpackMiddleware(webpack(webpackConfig), {
+		noInfo: true,
+	})
+);
 server.use(express.static('public'));
 server.use(helmet());
 
@@ -26,7 +30,17 @@ server.use('/api/command', proxy({target: 'http://localhost:3301'}));
 server.use('/api', proxy({target: 'http://localhost:3302'}));
 
 server.get('*', async (request, response) => {
-	const html = renderHTML(indexPage(initialModel));
+	const createPollPage = require('./views/create_poll').default;
+
+	const serverView = renderToString(
+		createPollPage(initialModel.createPollForm)
+	);
+
+	const model = Object.assign({}, initialModel, {
+		serverViewName: 'create_poll',
+		serverView,
+	});
+	const html = renderHTML(shell(model), model);
 	return response.send(html);
 });
 

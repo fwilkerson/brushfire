@@ -1,64 +1,37 @@
-function renderStyleObject(style) {
-	if (!style) return '';
-	const styleString = Object.keys(style).reduce((styleString, key) => {
-		return (styleString += `${key}: ${style[key]};`);
-	}, '');
-
-	return `style="${styleString}"`;
+export function AsyncView(props) {
+	if (props.view) return props.view(props.model);
+	else {
+		props.importView().then(props.onComplete);
+		return props.placeholder;
+	}
 }
 
-function renderAttributes(attributes) {
-	if (!attributes) return '';
-	return Object.keys(attributes).reduce((attributeString, key) => {
-		if (key.slice(0, 2) == 'on') return attributeString;
+export const Route = props => props;
 
-		if (key === 'style' && typeof attributes[key] === 'object') {
-			return (attributeString += renderStyleObject(attributes[key]));
-		}
+export function Router(props) {
+	if (!props.children) return; // Error?
 
-		return (attributeString += `${key}="${attributes[key]}"`);
-	}, '');
+	if (typeof window === 'undefined') {
+		return props.model.serverView;
+	}
+
+	if (!window.onpopstate) window.onpopstate = props.routeChanged;
+
+	const match = props.children.find(matchRoute);
+
+	if (match) {
+		return match.view(props.model);
+	} else {
+		// Not Found?
+	}
 }
 
-function renderElement(acc, next) {
-	if (next.type) {
-		const attr = renderAttributes(next.attributes);
-		const children = renderToString(next.children);
-		acc += `<${next.type} ${attr}>${children}</${next.type}>`;
-	} else acc += next;
+function matchRoute(route) {
+	const currentPath = window.location.pathname;
 
-	return acc;
+	if (route.exact) {
+		return currentPath === route.path;
+	}
+
+	return currentPath.match(/[^\/]+/g)[0] === route.path.match(/[^\/]+/g)[0];
 }
-
-function renderToString(elements = []) {
-	if (!Array.isArray(elements)) elements = [elements];
-	return elements.reduce(renderElement, '');
-}
-
-export const renderHTML = vdom => `
-	<!DOCTYPE html>
-	<html lang="en">
-
-	<head>
-		<meta charset="utf-8">
-		<title>brushfire</title>	
-		<meta name="description" content="">
-		<meta name="author" content="">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="normalize.css">
-		<link rel="stylesheet" href="skeleton.css">
-		<link rel="icon" type="image/png" href="favicon.png">
-		<style>
-			#root {
-				padding-top: 10vh;
-			}
-		</style>
-	</head>
-
-	<body>
-		<div id="root">${renderToString(vdom)}</div>
-		<script src="bundle.js"></script>
-	</body>
-
-	</html>
-`;

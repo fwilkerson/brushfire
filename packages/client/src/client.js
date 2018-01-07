@@ -1,6 +1,19 @@
 import muve from './lib/muve';
 
-import {initialModel} from './model';
-import {indexPage} from './views';
+import {initialModel, setActiveView, getModel} from './model';
+import {shell} from './views';
 
-muve(indexPage, initialModel, document.getElementById('root'), true);
+const preloadedModel = window.__PRELOADED_STATE__ || initialModel;
+
+function render(model) {
+	muve(shell, model, document.getElementById('root'), true);
+}
+
+if (preloadedModel.serverViewName) {
+	import('./views/' + preloadedModel.serverViewName)
+		.then(result => {
+			setActiveView(result);
+			render(getModel());
+		})
+		.catch(console.error);
+} else render(initialModel);

@@ -1,4 +1,7 @@
 {
 	"presets": [["env", {"targets": {"node": "current"}}]],
-	"plugins": [["transform-react-jsx", {"pragma": "h"}]]
+	"plugins": [
+		["transform-react-jsx", {"pragma": "h"}],
+		"dynamic-import-webpack"
+	]
 }

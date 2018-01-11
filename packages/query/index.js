@@ -35,7 +35,12 @@ const eventHandlers = {
 				id: aggregate_id,
 				version: event_id,
 				pollQuestion: payload.pollQuestion,
-				pollOptions: payload.pollOptions,
+				// build the model the view needs here
+				pollOptions: payload.pollOptions.map((option, i) => ({
+					key: i,
+					value: option,
+					selected: false,
+				})),
 				createdAt: created_at,
 			},
 		});

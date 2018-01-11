@@ -20,6 +20,10 @@ function renderAttributes(attributes) {
 			return (attributeString += renderStyleObject(attributes[key]));
 		}
 
+		if (key === 'checked' && attributes[key] === false) {
+			return attributeString;
+		}
+
 		return (attributeString += `${key}="${attributes[key]}"`);
 	}, '');
 }
@@ -56,7 +60,8 @@ export const renderHTML = (vdom, serverModel) => {
 		<link rel="stylesheet" href="skeleton.css">
 		<link rel="icon" type="image/png" href="favicon.png">
 		<style>
-			#root {
+			.container {
+				max-width: 640px;
 				padding-top: 10vh;
 			}
 			.loading span {
@@ -78,6 +83,60 @@ export const renderHTML = (vdom, serverModel) => {
 					100% {
 							opacity: 0.2;
 					}
+			}
+			.control {
+				display: block;
+				position: relative;
+				padding-left: 4rem;
+				margin-bottom: 1.5rem;
+				cursor: pointer;
+				font-size: 2rem;
+			}
+			.control input {
+				position: absolute;
+				z-index: -1;
+				opacity: 0;
+			}
+			.control__indicator {
+				position: absolute;
+				top: 1px;
+				left: 0;
+				height: 3rem;
+				width: 3rem;
+				background: #e6e6e6;
+				border-radius: 4px
+			}
+			.control input:checked ~ .control__indicator {
+				background: #33c3f0;
+			}
+			.control:hover input:not([disabled]):checked ~ .control__indicator,
+			.control input:checked:focus ~ .control__indicator {
+				background: #1eaedb;
+			}
+			.control input:disabled ~ .control__indicator {
+				background: #e6e6e6;
+				opacity: 0.6;
+				pointer-events: none;
+			}
+			.control__indicator:after {
+				content: '';
+				position: absolute;
+				display: none;
+			}
+			.control input:checked ~ .control__indicator:after {
+				display: block;
+			}
+			.control--checkbox .control__indicator:after {
+				left: 11px;
+				top: 4px;
+				width: 7px;
+				height: 15px;
+				border: solid #fff;
+				border-width: 0 2px 2px 0;
+				transform: rotate(45deg);
+			}
+			.control--checkbox input:disabled ~ .control__indicator:after {
+				border-color: #7b7b7b;
 			}
 		</style>
 	</head>

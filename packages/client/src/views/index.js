@@ -28,8 +28,7 @@ const asynViewPoll = model => (
 );
 
 export const shell = model => (
-	<main>
-		<h2 style={{textAlign: 'center'}}>Brushfire</h2>
+	<main class="container">
 		<Router model={model} routeChanged={handleRouteChanged}>
 			<Route exact path="/" view={asynCreatePoll} />
 			<Route path="/poll/:id" view={asynViewPoll} />

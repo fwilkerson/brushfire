@@ -52,52 +52,37 @@ function createPoll() {
 
 export default model => (
 	<section>
-		<div class="row">
-			<div class="columns eight offset-by-two">
+		<h2 style={{textAlign: 'center'}}>Brushfire</h2>
+		<input
+			type="text"
+			class="u-full-width"
+			style={{fontSize: '2.5rem', height: '5rem'}}
+			placeholder="Type the poll question here..."
+			value={model.pollQuestion}
+			onInput={e => updatePollQuestion(e.target.value)}
+		/>
+		{model.pollOptions.map((option, i) => (
+			<div>
+				<span style={{paddingTop: '1rem', position: 'absolute'}}>{i + 1}.</span>
 				<input
 					type="text"
 					class="u-full-width"
-					style={{fontSize: '2.5rem', height: '5rem'}}
-					placeholder="Type the poll question here..."
-					value={model.pollQuestion}
-					onInput={e => updatePollQuestion(e.target.value)}
+					style={{
+						borderRadius: '0',
+						borderWidth: '0 0 1px 0',
+						paddingLeft: '2rem',
+					}}
+					value={option}
+					placeholder="poll option..."
+					onInput={e => updatePollOptions(e.target.value, i)}
 				/>
 			</div>
-		</div>
-		{model.pollOptions.map((option, i) => (
-			<div class="row">
-				<div class="columns eight offset-by-two">
-					<span style={{paddingTop: '1rem', position: 'absolute'}}>
-						{i + 1}.
-					</span>
-					<input
-						type="text"
-						class="u-full-width"
-						style={{
-							borderRadius: '0',
-							borderWidth: '0 0 1px 0',
-							paddingLeft: '2rem',
-						}}
-						value={option}
-						placeholder="poll option..."
-						onInput={e => updatePollOptions(e.target.value, i)}
-					/>
-				</div>
-			</div>
 		))}
-		<div class="row">
-			<div class="columns eight offset-by-two">
-				<a style={{cursor: 'pointer'}} onClick={addNewPollOption}>
-					Add new poll option
-				</a>
-			</div>
-		</div>
-		<div class="row">
-			<div class="columns eight offset-by-two">
-				<button onClick={createPoll} class="button-primary u-pull-right">
-					Create Poll
-				</button>
-			</div>
-		</div>
+		<a style={{cursor: 'pointer'}} onClick={addNewPollOption}>
+			Add new poll option
+		</a>
+		<button onClick={createPoll} class="button-primary u-pull-right">
+			Create Poll
+		</button>
 	</section>
 );

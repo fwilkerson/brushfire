@@ -13,7 +13,13 @@ import {renderHTML, renderToString} from './lib/render';
 import {initialModel} from './model';
 import {shell} from './views';
 
+/**
+ * Simplify the development environment by keeping the microservices in
+ * child processes. In a production environment, each service would be in
+ * it's own node.
+ */
 const commandService = fork(__dirname + '/services/command/index.js');
+const queryService = fork(__dirname + '/services/query/index.js');
 
 const server = express();
 

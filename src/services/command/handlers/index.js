@@ -41,7 +41,7 @@ export const commandHandlers = (appendEvent, publisher) => ({
 		});
 
 		// Step 5. Publish POLL_CREATED event
-		publisher.send([aggregateId, JSON.stringify(event)]);
+		publisher.send(aggregateId, event);
 	},
 
 	[commandTypes.VOTE_ON_POLL]: async (payload, resolve) => {
@@ -75,6 +75,6 @@ export const commandHandlers = (appendEvent, publisher) => ({
 		});
 
 		// Step 5. Publish POLL_CREATED event
-		publisher.send([pollId, JSON.stringify(event)]);
+		publisher.send(pollId, event);
 	},
 });

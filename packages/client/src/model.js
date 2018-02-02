@@ -5,7 +5,7 @@ export const initialModel = {
 		pollQuestion: '',
 		pollOptions: ['', '', ''],
 	},
-	viewPoll: {poll: {pollQuestion: '', pollOptions: []}},
+	voteOnPoll: {poll: {pollQuestion: '', pollOptions: []}},
 	activeView: null,
 	route: getInitialRoute(),
 };

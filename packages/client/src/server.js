@@ -28,20 +28,20 @@ server.use('/api', proxy({target: 'http://localhost:3302'}));
 server.use('/socket.io', proxy({target: 'http://localhost:3303', ws: true}));
 
 server.get('/poll/:id', async (request, response) => {
-	const viewPollPage = require('./views/view_poll').default;
+	const voteOnPollPage = require('./views/vote_on_poll').default;
 
 	const data = await fetch(
 		`http://localhost:3302/api/poll?id=${request.params.id}`
 	);
 	const poll = await data.json();
-	const {viewPoll} = initialModel;
-	viewPoll.poll = poll;
-	const serverView = renderToString(viewPollPage(viewPoll));
+	const {voteOnPoll} = initialModel;
+	voteOnPoll.poll = poll;
+	const serverView = renderToString(voteOnPollPage(voteOnPoll));
 
 	const model = Object.assign({}, initialModel, {
-		serverViewName: 'view_poll',
+		serverViewName: 'vote_on_poll',
 		serverView,
-		viewPoll,
+		voteOnPoll,
 	});
 	const html = renderHTML(shell(model), model);
 	return response.send(html);

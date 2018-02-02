@@ -11,7 +11,7 @@ const getDefaultProps = model => ({
 	view: model.activeView && model.activeView.default,
 });
 
-const asynCreatePoll = model => (
+const asyncCreatePoll = model => (
 	<AsyncView
 		{...getDefaultProps(model)}
 		importView={() => import('./create_poll')}
@@ -19,19 +19,19 @@ const asynCreatePoll = model => (
 	/>
 );
 
-const asynViewPoll = model => (
+const asyncVoteOnPoll = model => (
 	<AsyncView
 		{...getDefaultProps(model)}
-		importView={() => import('./view_poll')}
-		model={model.viewPoll}
+		importView={() => import('./vote_on_poll')}
+		model={model.voteOnPoll}
 	/>
 );
 
 export const shell = model => (
 	<main class="container">
 		<Router model={model} routeChanged={handleRouteChanged}>
-			<Route exact path="/" view={asynCreatePoll} />
-			<Route path="/poll/:id" view={asynViewPoll} />
+			<Route exact path="/" view={asyncCreatePoll} />
+			<Route path="/poll/:id" view={asyncVoteOnPoll} />
 		</Router>
 	</main>
 );

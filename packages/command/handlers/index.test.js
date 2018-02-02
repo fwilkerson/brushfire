@@ -107,3 +107,9 @@ test('CREATE_POLL : functionality', async t => {
 		])
 	);
 });
+
+test.serial('VOTE_ON_POLL : exists', t => {
+	t.true(typeof handlers[commandTypes.VOTE_ON_POLL] === 'function');
+});
+
+const voteOnPoll = handlers[commandTypes.VOTE_ON_POLL];

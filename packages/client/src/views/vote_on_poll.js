@@ -3,23 +3,23 @@ import {commandTypes} from '../../../shared';
 import {joinChannel, leaveChannel} from '../lib/socket';
 import {getModel, setModel} from '../model';
 
-function setViewPoll(partial, updateType) {
-	const {viewPoll} = getModel();
-	setModel({viewPoll: {...viewPoll, ...partial}}, updateType);
+function setVoteOnPoll(partial, updateType) {
+	const {voteOnPoll} = getModel();
+	setModel({voteOnPoll: {...voteOnPoll, ...partial}}, updateType);
 }
 
 function togglePollOptionSelected(key) {
-	const {viewPoll: {poll}} = getModel();
+	const {voteOnPoll: {poll}} = getModel();
 	const pollOptions = poll.pollOptions.map(option => ({
 		...option,
 		selected: key === option.key ? !option.selected : false,
 	}));
 
-	setViewPoll({poll: {...poll, pollOptions}});
+	setVoteOnPoll({poll: {...poll, pollOptions}});
 }
 
 function submitVote() {
-	const {viewPoll: {poll}} = getModel();
+	const {voteOnPoll: {poll}} = getModel();
 	const command = {
 		type: commandTypes.VOTE_ON_POLL,
 		payload: {
@@ -38,8 +38,21 @@ function submitVote() {
 		.catch(console.error);
 }
 
+function viewResults() {
+	const {voteOnPoll: {poll}} = getModel();
+	fetch(`/api/poll/votes?id=${poll.id}`)
+		.then(response => response.json())
+		.then(data => {
+			if (data.error) {
+
+			} else {
+				console.log(data);
+			}
+		});
+}
+
 export function didMount() {
-	const {route, viewPoll} = getModel();
+	const {route, voteOnPoll} = getModel();
 
 	if (route) {
 		const {path} = route;
@@ -49,13 +62,13 @@ export function didMount() {
 		joinChannel(id);
 
 		// Don't query if socket already got the data?
-		if (viewPoll.poll.id !== id) {
+		if (voteOnPoll.poll.id !== id) {
 			// there's a chance that this completes before the poll is created
 			fetch(`/api/poll?id=${id}`)
 				.then(response => response.json())
 				.then(data => {
 					if (data.error) {
-					} else setViewPoll({poll: data});
+					} else setVoteOnPoll({poll: data});
 				})
 				.catch(console.error);
 		}
@@ -63,14 +76,14 @@ export function didMount() {
 }
 
 export function didUnmount() {
-	const {viewPoll} = getModel();
+	const {voteOnPoll} = getModel();
 
-	if (viewPoll.poll.id) {
-		leaveChannel(viewPoll.poll.id);
+	if (voteOnPoll.poll.id) {
+		leaveChannel(voteOnPoll.poll.id);
 	}
 
 	// reset to initial state
-	setViewPoll({poll: {pollQuestion: '', pollOptions: []}});
+	setVoteOnPoll({poll: {pollQuestion: '', pollOptions: []}});
 }
 
 export default ({poll}) => (
@@ -102,6 +115,7 @@ export default ({poll}) => (
 				padding: '0 3rem',
 			}}
 			class="u-pull-right"
+			onClick={viewResults}
 		>
 			View Results
 		</a>

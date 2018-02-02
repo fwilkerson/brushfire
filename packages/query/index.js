@@ -30,7 +30,8 @@ io.sockets.on('connection', function(socket) {
 const eventHandlers = {
 	[eventTypes.POLL_CREATED]: (state, event) => {
 		const {aggregate_id, event_id, created_at, payload} = event;
-		return Object.assign({}, state, {
+		return {
+			...state,
 			[aggregate_id]: {
 				id: aggregate_id,
 				version: event_id,
@@ -42,9 +43,19 @@ const eventHandlers = {
 					selected: false,
 				})),
 				createdAt: created_at,
-			},
-		});
+			}
+		}
 	},
+	[eventTypes.POLL_VOTED_ON]: (state, event) => {
+		const {aggregate_id, event_id, created_at, payload} = event;
+		return {
+			...state,
+			[aggregate_id]: {
+				...state[aggregate_id],
+				votes: (state[aggregate_id].votes || []).concat(payload)
+			}
+		}
+	}
 };
 
 function eventHandler(state, event) {
@@ -80,6 +91,12 @@ module.exports = async (request, response) => {
 			result = state[query.id]
 				? [200, state[query.id]]
 				: [404, {error: `No poll with with the given id (${query.id})`}];
+			break;
+		case '/api/poll/votes':
+			result = state[query.id]
+				? [200, state[query.id].votes]
+				: [404, {error: `No poll with with the given id (${query.id})`}];
+			break;
 		default:
 			// TODO: Throw error
 			break;

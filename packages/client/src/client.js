@@ -22,9 +22,9 @@ switch (preloadedModel.serverViewName) {
 	case 'create_poll':
 		import('./views/create_poll').then(renderAsyncView);
 		break;
-	case 'view_poll':
-		setModel({viewPoll: preloadedModel.viewPoll});
-		import('./views/view_poll').then(renderAsyncView);
+	case 'vote_on_poll':
+		setModel({voteOnPoll: preloadedModel.voteOnPoll});
+		import('./views/vote_on_poll').then(renderAsyncView);
 		break;
 	default:
 		render(initialModel);

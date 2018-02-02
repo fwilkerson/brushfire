@@ -12,12 +12,7 @@ exports.commandHandlers = (appendEvent, publisher) => ({
 
 		const {pollOptions, pollQuestion} = payload;
 
-		if (
-			pollOptions == null ||
-			!Array.isArray(pollOptions) ||
-			pollQuestion == null ||
-			typeof pollQuestion != 'string'
-		) {
+		if (!Array.isArray(pollOptions) || typeof pollQuestion != 'string') {
 			return resolve([400, {error: 'Invalid payload'}]);
 		}
 
@@ -47,5 +42,39 @@ exports.commandHandlers = (appendEvent, publisher) => ({
 
 		// Step 5. Publish POLL_CREATED event
 		publisher.send([aggregateId, JSON.stringify(event)]);
+	},
+
+	[commandTypes.VOTE_ON_POLL]: async (payload, resolve) => {
+		// Step 1. Validate payload
+		if (payload == null) {
+			return resolve([400, {error: 'Invalid payload'}]);
+		}
+
+		// should we normalize to aggregateId everywhere?
+		const {pollId, selectedOptions} = payload;
+
+		if (typeof pollId != 'string' || !Array.isArray(selectedOptions)) {
+			return resolve([400, {error: 'Invalid payload'}]);
+		}
+
+		if (count(selectedOptions) === 0) {
+			return resolve([400, {error: 'A selected option is required to vote'}]);
+		}
+
+		// Step 3. Send the status code and aggregateId to the client
+		resolve([202, {pollId}]);
+
+		// Step 4. Save the POLL_CREATED event
+		const event = await appendEvent({
+			aggregateId: pollId,
+			type: eventTypes.POLL_VOTED_ON,
+			payload: {
+				// in future record who voted on the poll?
+				selectedOptions,
+			},
+		});
+
+		// Step 5. Publish POLL_CREATED event
+		publisher.send([pollId, JSON.stringify(event)]);
 	},
 });

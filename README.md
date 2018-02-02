@@ -1,6 +1,6 @@
 # Brushfire
 
-Brushfire - Realtime anonymous polling
+> Realtime anonymous polling
 
 ## Project Goals
 

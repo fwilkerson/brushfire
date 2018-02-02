@@ -2,53 +2,15 @@
 
 Brushfire - Realtime anonymous polling
 
-## User Story - The user wants to create a new poll.
+## Project Goals
 
-~~User enters a question~~
-
-~~User enters at least two potential options to choose from~~
-
-User selects create poll and is given a link
-
-If the creator of the poll visits the link they are shown the realtime results
-
-The user can choose to end the poll at any time
-
-Polling is automatically ended after three days
-
-If a user visits a poll that has ended they are shown the results of the poll
-
-## User Story - The user wants to vote on a poll.
-
-~~User visits the link of the poll~~
-
-~~User selects one or more of the given options~~
-
-### Creators need a way to say a user can enter multiple answers
-
-After user submits their answer(s) they are shown the results
-
-### Should users be able to see the results without voting?
-
-## Technical Challenges
-
-* Generating links for each poll
-
-* Potentially a url shortener
-
-* Check IP address to prevent spammers?
-
-* How do we determine if a user created the poll if they are anon?
-
-## Architecture
-
-~~Front end should be server rendered for SEO~~
+Front end should be server rendered for SEO
 
 Some form of charting (pie, bar, etc) is needed to visualize the results
 
 Page loads need to be fucking fast (minimal dependencies)
 
-~~Event driven backend~~
+Event driven backend
 
 The read should only load data for the active aggregates
 
@@ -90,6 +52,45 @@ const event = {
 };
 ```
 
+## Technical Challenges
+
+* Generating links for each poll
+
+* Potentially a url shortener
+
+* Check IP address to prevent spammers?
+
+* How do we determine if a user created the poll if they are anon?
+
 I think the greatest challenge would be is the aggregate treated as a pub/sub topic. If so how do we ensure nothing is missed when we subscribe? _Perhaps create the subscription once the aggregateId is generated & before the event is published._
 
 Because polls are automatically closed after 24hrs we can remove the topic subscription for that aggregateId after 24hrs. If a user asks for a closed poll, simply rebuild the aggregate from scratch. In the event of a large aggregate we could chose to create a snapshot after a certain number of events (or create a snapshot after 24hrs?).
+
+
+## User Story - The user wants to create a new poll.
+
+~~User enters a question~~
+
+~~User enters at least two potential options to choose from~~
+
+User selects create poll and is given a link
+
+If the creator of the poll visits the link they are shown the realtime results
+
+The user can choose to end the poll at any time
+
+Polling is automatically ended after three days
+
+If a user visits a poll that has ended they are shown the results of the poll
+
+## User Story - The user wants to vote on a poll.
+
+~~User visits the link of the poll~~
+
+~~User selects one or more of the given options~~
+
+### Creators need a way to say a user can enter multiple answers
+
+After user submits their answer(s) they are shown the results
+
+### Should users be able to see the results without voting?

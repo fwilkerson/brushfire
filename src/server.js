@@ -6,7 +6,7 @@ import proxy from 'http-proxy-middleware';
 import webpack from 'webpack';
 import webpackMiddleware from 'webpack-dev-middleware';
 
-import webpackConfig from '../webpack.config';
+import webpackConfig from '../config/webpack.config';
 import {renderHTML, renderToString} from './lib/render';
 import {initialModel} from './model';
 import {shell} from './views';
@@ -18,21 +18,20 @@ server.use(webpackMiddleware(webpack(webpackConfig), {stats: {colors: true}}));
 server.use(express.static('public'));
 server.use(helmet());
 
-// TODO: Put the api addresses into env variable
+const commandApiUrl = `http://localhost:${process.env.COMMANDS_PORT}`;
+const queryApiUrl = `http://localhost:${process.env.QUERIES_PORT}`;
 
 // Command api
-server.use('/api/command', proxy({target: 'http://localhost:3301'}));
+server.use('/api/command', proxy({target: commandApiUrl}));
 
 // Query api
-server.use('/api', proxy({target: 'http://localhost:3302'}));
-server.use('/socket.io', proxy({target: 'http://localhost:3303', ws: true}));
+server.use('/api', proxy({target: queryApiUrl}));
+server.use('/socket.io', proxy({target: queryApiUrl, ws: true}));
 
 server.get('/poll/:id', async (request, response) => {
 	const voteOnPollPage = require('./views/vote-on-poll').default;
 
-	const data = await fetch(
-		`http://localhost:3302/api/poll?id=${request.params.id}`
-	);
+	const data = await fetch(`${queryApiUrl}/api/poll?id=${request.params.id}`);
 	const poll = await data.json();
 	const {voteOnPoll} = initialModel;
 	voteOnPoll.poll = poll;
@@ -62,4 +61,4 @@ server.get('/*', async (request, response) => {
 	return response.send(html);
 });
 
-server.listen(process.env.PORT || 5000);
+server.listen(process.env.PORT);

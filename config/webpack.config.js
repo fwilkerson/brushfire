@@ -1,9 +1,9 @@
-const path = require('path');
+const {resolve} = require('path');
 
 module.exports = {
-	entry: ['./src/client.js'],
+	entry: resolve(__dirname, '..', 'src', 'client.js'),
 	output: {
-		path: path.resolve(__dirname, 'public'),
+		path: resolve(__dirname, '..', 'public'),
 		filename: 'bundle.js',
 	},
 	module: {

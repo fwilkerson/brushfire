@@ -1,16 +1,8 @@
-import dotenv from 'dotenv';
 import micro, {json, send} from 'micro';
 import {producer} from 'persevere-io';
 
-const config = dotenv.config({path: __dirname + '/.env'});
-
 import {appendEvent, getEvents} from './db';
 import {commandHandlers} from './handlers';
-
-// Blow the service up if there is an env config error
-if (config.error) {
-	throw config.error;
-}
 
 function app({publisher}) {
 	const handlers = commandHandlers(appendEvent, publisher);
@@ -45,8 +37,8 @@ async function start() {
 
 	const server = micro(app({publisher}));
 
-	server.listen(process.env.PORT, () => {
-		console.info(`command is listening on port: ${process.env.PORT}`);
+	server.listen(process.env.COMMANDS_PORT, () => {
+		console.info(`command is listening on port: ${process.env.COMMANDS_PORT}`);
 	});
 }
 

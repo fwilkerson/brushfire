@@ -1,4 +1,13 @@
 const {fork} = require('child_process');
+const {join} = require('path');
+const config = require('dotenv').config({
+	path: join(__dirname, 'config', '.env'),
+});
+
+if (config.error) {
+	throw config.error;
+}
+
 require('babel-register');
 require('./src/server');
 

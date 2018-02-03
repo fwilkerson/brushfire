@@ -3,7 +3,9 @@
 	"version": "1.0.0",
 	"main": "index.js",
 	"license": "MIT",
-	"scripts": {},
+	"scripts": {
+		"dev": "nodemon"
+	},
 	"dependencies": {
 		"babel-register": "^6.26.0",
 		"compression": "^1.7.1",

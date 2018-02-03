@@ -1,2 +1,2 @@
 require('babel-register');
-require('./src/micro-services/commands');
+require('./src/services/commands');

@@ -19,12 +19,12 @@ function renderAsyncView(result) {
 connectSocket();
 
 switch (preloadedModel.serverViewName) {
-	case 'create_poll':
-		import('./views/create_poll').then(renderAsyncView);
+	case 'create-poll':
+		import('./views/create-poll').then(renderAsyncView);
 		break;
-	case 'vote_on_poll':
+	case 'vote-on-poll':
 		setModel({voteOnPoll: preloadedModel.voteOnPoll});
-		import('./views/vote_on_poll').then(renderAsyncView);
+		import('./views/vote-on-poll').then(renderAsyncView);
 		break;
 	default:
 		render(initialModel);

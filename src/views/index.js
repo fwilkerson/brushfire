@@ -14,7 +14,7 @@ const getDefaultProps = model => ({
 const asyncCreatePoll = model => (
 	<AsyncView
 		{...getDefaultProps(model)}
-		importView={() => import('./create_poll')}
+		importView={() => import('./create-poll')}
 		model={model.createPollForm}
 	/>
 );
@@ -22,7 +22,7 @@ const asyncCreatePoll = model => (
 const asyncVoteOnPoll = model => (
 	<AsyncView
 		{...getDefaultProps(model)}
-		importView={() => import('./vote_on_poll')}
+		importView={() => import('./vote-on-poll')}
 		model={model.voteOnPoll}
 	/>
 );

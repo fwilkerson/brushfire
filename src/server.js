@@ -1,5 +1,3 @@
-import {fork} from 'child_process';
-
 import compression from 'compression';
 import express from 'express';
 import fetch from 'node-fetch';
@@ -12,14 +10,6 @@ import webpackConfig from '../webpack.config';
 import {renderHTML, renderToString} from './lib/render';
 import {initialModel} from './model';
 import {shell} from './views';
-
-/**
- * Simplify the development environment by keeping the microservices in
- * child processes. In a production environment, each service would be in
- * it's own node.
- */
-const commandService = fork(__dirname + '/services/command/index.js');
-const queryService = fork(__dirname + '/services/query/index.js');
 
 const server = express();
 
@@ -38,7 +28,7 @@ server.use('/api', proxy({target: 'http://localhost:3302'}));
 server.use('/socket.io', proxy({target: 'http://localhost:3303', ws: true}));
 
 server.get('/poll/:id', async (request, response) => {
-	const voteOnPollPage = require('./views/vote_on_poll').default;
+	const voteOnPollPage = require('./views/vote-on-poll').default;
 
 	const data = await fetch(
 		`http://localhost:3302/api/poll?id=${request.params.id}`
@@ -49,7 +39,7 @@ server.get('/poll/:id', async (request, response) => {
 	const serverView = renderToString(voteOnPollPage(voteOnPoll));
 
 	const model = Object.assign({}, initialModel, {
-		serverViewName: 'vote_on_poll',
+		serverViewName: 'vote-on-poll',
 		serverView,
 		voteOnPoll,
 	});
@@ -58,14 +48,14 @@ server.get('/poll/:id', async (request, response) => {
 });
 
 server.get('/*', async (request, response) => {
-	const createPollPage = require('./views/create_poll').default;
+	const createPollPage = require('./views/create-poll').default;
 
 	const serverView = renderToString(
 		createPollPage(initialModel.createPollForm)
 	);
 
 	const model = Object.assign({}, initialModel, {
-		serverViewName: 'create_poll',
+		serverViewName: 'create-poll',
 		serverView,
 	});
 	const html = renderHTML(shell(model), model);

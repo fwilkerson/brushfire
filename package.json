@@ -32,5 +32,19 @@
 		"prettier": "^1.9.2",
 		"webpack": "^3.10.0",
 		"webpack-dev-middleware": "^2.0.3"
+	},
+	"babel": {
+		"presets": [["env", {"targets": {"node": "current"}}]],
+		"plugins": [
+			["transform-react-jsx", {"pragma": "h"}],
+			"dynamic-import-webpack",
+			"transform-object-rest-spread"
+		]
+	},
+	"prettier": {
+		"bracketSpacing": false,
+		"singleQuote": true,
+		"trailingComma": "es5",
+		"useTabs": true
 	}
 }

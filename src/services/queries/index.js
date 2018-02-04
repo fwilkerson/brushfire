@@ -4,6 +4,7 @@ import micro, {send} from 'micro';
 import {consumer} from 'persevere-io';
 import webSocket from 'ws';
 
+import {systemMessages} from '../../constants';
 import {eventHandler} from './handlers';
 
 let state = {};
@@ -73,7 +74,7 @@ async function start() {
 			const {type, payload} = JSON.parse(event);
 
 			switch (type) {
-				case 'join channel':
+				case systemMessages.JOIN_CHANNEL:
 					if (!Array.isArray(channels[payload])) {
 						channels[payload] = [];
 					}
@@ -81,7 +82,7 @@ async function start() {
 						channels[payload].push(ws);
 					}
 					break;
-				case 'leave channel':
+				case systemMessages.LEAVE_CHANNEL:
 					if (!Array.isArray(channels[payload])) {
 						channels[payload] = [];
 					}

@@ -7,3 +7,8 @@ export const eventTypes = {
 	POLL_CREATED: 'POLL_CREATED',
 	POLL_VOTED_ON: 'POLL_VOTED_ON',
 };
+
+export const systemMessages = {
+	JOIN_CHANNEL: 'JOIN_CHANNEL',
+	LEAVE_CHANNEL: 'LEAVE_CHANNEL',
+};

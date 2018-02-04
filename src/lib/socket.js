@@ -1,6 +1,6 @@
 import sockette from 'sockette';
 
-import {eventTypes} from '../constants';
+import {eventTypes, systemMessages} from '../constants';
 import {isWaiting} from './dataService';
 import {getModel, setModel} from '../model';
 
@@ -9,14 +9,14 @@ let ws;
 function onReceive(event) {
 	const {type, payload} = JSON.parse(event.data);
 
-	// the dataService is expecting and has handled the web socket message
+	// the dataService is expecting and has handled the ws message
 	if (isWaiting(payload)) {
 		return;
 	}
 
 	switch (type) {
 		case eventTypes.POLL_VOTED_ON:
-			// TODO: UI for voting results
+			// TODO: Use case for voting results
 			console.info(type, payload);
 			break;
 		default:
@@ -40,12 +40,12 @@ export function connectSocket() {
 
 export function joinChannel(channel) {
 	if (ws) {
-		ws.json({type: 'join channel', payload: channel});
+		ws.json({type: systemMessages.JOIN_CHANNEL, payload: channel});
 	}
 }
 
 export function leaveChannel(channel) {
 	if (ws) {
-		ws.json({type: 'leave channel', payload: channel});
+		ws.json({type: systemMessages.LEAVE_CHANNEL, payload: channel});
 	}
 }

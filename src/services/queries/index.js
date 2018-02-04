@@ -2,16 +2,20 @@ import {parse} from 'url';
 
 import micro, {send} from 'micro';
 import {consumer} from 'persevere-io';
-import socketio from 'socket.io';
+import webSocket from 'ws';
 
 import {eventHandler} from './handlers';
 
-let io;
 let state = {};
+const channels = {};
 
-function publishClientMessage(aggregateId, event) {
-	if (io) {
-		io.sockets.in(aggregateId).emit(event.type, state[aggregateId]);
+function publishClientMessage(aggregateId, {type}) {
+	if (Array.isArray(channels[aggregateId])) {
+		channels[aggregateId].forEach(socket => {
+			if (socket.readyState === webSocket.OPEN) {
+				socket.send(JSON.stringify({type, payload: state[aggregateId]}));
+			}
+		});
 	}
 }
 
@@ -56,12 +60,35 @@ async function start() {
 
 	const server = micro(app());
 
-	io = socketio(server);
+	const wss = new webSocket.Server({server, path: '/web-socket'});
 
-	io.sockets.on('connection', socket => {
-		socket.on('join channel', socket.join);
-		socket.on('leave channel', socket.leave);
+	wss.on('connection', ws => {
+		ws.on('message', event => {
+			const {type, payload} = JSON.parse(event);
+
+			switch (type) {
+				case 'join channel':
+					if (!Array.isArray(channels[payload])) {
+						channels[payload] = [];
+					}
+					if (channels[payload].indexOf(ws) === -1) {
+						channels[payload].push(ws);
+					}
+					break;
+				case 'leave channel':
+					if (!Array.isArray(channels[payload])) {
+						channels[payload] = [];
+					}
+					channels[payload] = channels[payload].filter(socket => socket !== ws);
+					break;
+				default:
+					break;
+			}
+		});
+		ws.on('error', console.error);
 	});
+
+	wss.on('error', console.error);
 
 	server.listen(process.env.QUERIES_PORT, () => {
 		console.info(`query is listening on port: ${process.env.QUERIES_PORT}`);

@@ -51,9 +51,9 @@ export const commandHandlers = (appendEvent, publisher) => ({
 		}
 
 		// should we normalize to aggregateId everywhere?
-		const {pollId, selectedOptions} = payload;
+		const {aggregateId, selectedOptions} = payload;
 
-		if (typeof pollId != 'string' || !Array.isArray(selectedOptions)) {
+		if (typeof aggregateId != 'string' || !Array.isArray(selectedOptions)) {
 			return resolve([400, {error: 'Invalid payload'}]);
 		}
 
@@ -62,11 +62,11 @@ export const commandHandlers = (appendEvent, publisher) => ({
 		}
 
 		// Step 3. Send the status code and aggregateId to the client
-		resolve([202, {pollId}]);
+		resolve([202, {aggregateId}]);
 
 		// Step 4. Save the POLL_CREATED event
 		const event = await appendEvent({
-			aggregateId: pollId,
+			aggregateId,
 			type: eventTypes.POLL_VOTED_ON,
 			payload: {
 				// in future record who voted on the poll?
@@ -75,6 +75,6 @@ export const commandHandlers = (appendEvent, publisher) => ({
 		});
 
 		// Step 5. Publish POLL_CREATED event
-		publisher.send(pollId, event);
+		publisher.send(aggregateId, event);
 	},
 });

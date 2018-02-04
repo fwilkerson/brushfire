@@ -1,6 +1,8 @@
 import {h} from 'muve';
-import {getModel, setModel, setRoute} from '../model';
+
 import {commandTypes} from '../constants';
+import dataService from '../lib/dataService';
+import {getModel, setModel, setRoute} from '../model';
 
 function setCreatePollForm(partial, updateType) {
 	const {createPollForm} = getModel();
@@ -35,15 +37,12 @@ function createPoll() {
 		payload: createPollForm,
 	};
 
-	fetch('/api/command', {
-		method: 'POST',
-		headers: {'Content-Type': 'application/json'},
-		body: JSON.stringify(command),
-	})
-		.then(response => response.json())
+	dataService
+		.postCommand(command)
 		.then(data => {
 			if (data.error) {
 			} else {
+				setModel({voteOnPoll: {poll: data}});
 				setRoute('/poll/' + data.aggregateId);
 			}
 		})

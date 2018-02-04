@@ -1,25 +1,23 @@
 import sockette from 'sockette';
 
-import {getModel, setModel} from '../model';
 import {eventTypes} from '../constants';
+import {isWaiting} from './dataService';
+import {getModel, setModel} from '../model';
 
 let ws;
 
-// Find a way to limit messages to what the user is viewing
 function onReceive(event) {
 	const {type, payload} = JSON.parse(event.data);
 
-	switch (type) {
-		case eventTypes.POLL_CREATED:
-			const {route, voteOnPoll} = getModel();
-			const {path} = route;
-			const id = path.slice(path.lastIndexOf('/') + 1);
+	// the dataService is expecting and has handled the web socket message
+	if (isWaiting(payload)) {
+		return;
+	}
 
-			// first check that the active route is interested in this poll
-			// then see if the user has already received the poll
-			if (payload.id === id && voteOnPoll.poll.id !== id) {
-				setModel({voteOnPoll: {poll: payload}});
-			}
+	switch (type) {
+		case eventTypes.POLL_VOTED_ON:
+			// TODO: UI for voting results
+			console.info(type, payload);
 			break;
 		default:
 			console.info(type, payload);
@@ -28,7 +26,7 @@ function onReceive(event) {
 }
 
 export function connectSocket() {
-	// use sockette for auto reconnect
+	// using sockette for auto reconnect
 	ws = sockette('ws://localhost:5000/web-socket', {
 		timeout: 5e3,
 		maxAttempts: 3,

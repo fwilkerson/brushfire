@@ -29,10 +29,12 @@ server.use('/api', proxy({target: queryApiUrl}));
 const wsProxy = proxy(`ws://localhost:${process.env.QUERIES_PORT}/web-socket`);
 server.use('/web-socket', wsProxy);
 
-server.get('/poll/:id', async (request, response) => {
+server.get('/poll/:aggregateId', async (request, response) => {
 	const voteOnPollPage = require('./views/vote-on-poll').default;
 
-	const data = await fetch(`${queryApiUrl}/api/poll?id=${request.params.id}`);
+	const data = await fetch(
+		`${queryApiUrl}/api/poll?aggregateId=${request.params.aggregateId}`
+	);
 	const poll = await data.json();
 	const {voteOnPoll} = initialModel;
 	voteOnPoll.poll = poll;

@@ -23,7 +23,7 @@ function submitVote() {
 	const command = {
 		type: commandTypes.VOTE_ON_POLL,
 		payload: {
-			pollId: poll.id,
+			aggregateId: poll.aggregateId,
 			selectedOptions: poll.pollOptions.filter(option => option.selected),
 		},
 	};
@@ -40,7 +40,7 @@ function submitVote() {
 
 function viewResults() {
 	const {voteOnPoll: {poll}} = getModel();
-	fetch(`/api/poll/votes?id=${poll.id}`)
+	fetch(`/api/poll/votes?aggregateId=${poll.aggregateId}`)
 		.then(response => response.json())
 		.then(data => {
 			if (data.error) {
@@ -61,9 +61,9 @@ export function didMount() {
 		joinChannel(id);
 
 		// Don't query if socket already got the data?
-		if (voteOnPoll.poll.id !== id) {
+		if (voteOnPoll.poll.aggregateId !== id) {
 			// there's a chance that this completes before the poll is created
-			fetch(`/api/poll?id=${id}`)
+			fetch(`/api/poll?aggregateId=${id}`)
 				.then(response => response.json())
 				.then(data => {
 					if (data.error) {
@@ -77,8 +77,8 @@ export function didMount() {
 export function didUnmount() {
 	const {voteOnPoll} = getModel();
 
-	if (voteOnPoll.poll.id) {
-		leaveChannel(voteOnPoll.poll.id);
+	if (voteOnPoll.poll.aggregateId) {
+		leaveChannel(voteOnPoll.poll.aggregateId);
 	}
 
 	// reset to initial state

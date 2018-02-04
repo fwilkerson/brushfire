@@ -27,14 +27,20 @@ function app() {
 		let result = [];
 		switch (pathname) {
 			case '/api/poll':
-				result = state[query.id]
-					? [200, state[query.id]]
-					: [404, {error: `No poll with with the given id (${query.id})`}];
+				result = state[query.aggregateId]
+					? [200, state[query.aggregateId]]
+					: [
+							404,
+							{error: `No poll with with the given id (${query.aggregateId})`},
+						];
 				break;
 			case '/api/poll/votes':
-				result = state[query.id]
-					? [200, state[query.id].votes]
-					: [404, {error: `No poll with with the given id (${query.id})`}];
+				result = state[query.aggregateId]
+					? [200, state[query.aggregateId].votes]
+					: [
+							404,
+							{error: `No poll with with the given id (${query.aggregateId})`},
+						];
 				break;
 			default:
 				// TODO: Throw error

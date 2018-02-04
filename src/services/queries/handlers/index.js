@@ -6,7 +6,7 @@ const eventHandlers = {
 		return {
 			...state,
 			[aggregate_id]: {
-				id: aggregate_id,
+				aggregateId: aggregate_id,
 				version: event_id,
 				pollQuestion: payload.pollQuestion,
 				// build the model the view needs here

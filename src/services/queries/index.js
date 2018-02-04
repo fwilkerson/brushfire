@@ -42,17 +42,13 @@ function app() {
 
 async function start() {
 	await consumer({
-		subscriber: {
-			address: process.env.EVENT_STORE_PUB_SUB,
-			handler(aggregateId, event) {
-				state = eventHandler(state, event);
-				publishClientMessage(aggregateId, event);
-			},
+		onReceive(aggregateId, event) {
+			state = eventHandler(state, event);
+			publishClientMessage(aggregateId, event);
 		},
-		dealer: {
-			address: process.env.EVENT_STORE_SYNCHRONIZE,
-			data: {eventId: 0},
-			handler(events) {
+		initialize: {
+			args: {eventId: 0},
+			onInitialized(events) {
 				state = events.reduce(eventHandler, state);
 			},
 		},
@@ -62,14 +58,9 @@ async function start() {
 
 	io = socketio(server);
 
-	io.sockets.on('connection', function(socket) {
-		socket.on('join channel', function(channel) {
-			socket.join(channel);
-		});
-
-		socket.on('leave channel', function(channel) {
-			socket.leave(channel);
-		});
+	io.sockets.on('connection', socket => {
+		socket.on('join channel', socket.join);
+		socket.on('leave channel', socket.leave);
 	});
 
 	server.listen(process.env.QUERIES_PORT, () => {

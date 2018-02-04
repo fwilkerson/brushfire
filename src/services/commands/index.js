@@ -6,7 +6,6 @@ import {commandHandlers} from './handlers';
 
 function app({publisher}) {
 	const handlers = commandHandlers(appendEvent, publisher);
-
 	function routeCommand({type, payload}) {
 		return new Promise(resolve => {
 			if (typeof handlers[type] === 'function') {
@@ -25,18 +24,8 @@ function app({publisher}) {
 }
 
 async function start() {
-	const publisher = await producer({
-		publisher: {address: process.env.EVENT_STORE_PUB_SUB},
-		router: {
-			address: process.env.EVENT_STORE_SYNCHRONIZE,
-			handler({eventId}) {
-				return getEvents({eventId});
-			},
-		},
-	});
-
+	const publisher = await producer({initialize: {onInitialize: getEvents}});
 	const server = micro(app({publisher}));
-
 	server.listen(process.env.COMMANDS_PORT, () => {
 		console.info(`command is listening on port: ${process.env.COMMANDS_PORT}`);
 	});

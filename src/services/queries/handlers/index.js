@@ -1,4 +1,5 @@
 import {eventTypes} from '../../../constants';
+import {count} from '../../../utils';
 
 const eventHandlers = {
 	[eventTypes.POLL_CREATED]: (state, event) => {
@@ -21,11 +22,29 @@ const eventHandlers = {
 	},
 	[eventTypes.POLL_VOTED_ON]: (state, event) => {
 		const {aggregate_id, event_id, created_at, payload} = event;
+		const previous = state[aggregate_id];
+		const votes = (previous.votes || []).concat(payload);
+		const totalVotes = votes.length;
+		const pollResults = previous.pollOptions.reduce((results, option) => {
+			// find all votes for the given option
+			const numberOfVotes = count(votes, vote => {
+				return vote.selectedOptions.some(x => x.key === option.key);
+			});
+			results.push({
+				key: option.key,
+				value: option.value,
+				numberOfVotes,
+				percentage: (numberOfVotes / totalVotes * 100).toFixed(0) + '%',
+			});
+			return results;
+		}, []);
 		return {
 			...state,
 			[aggregate_id]: {
-				...state[aggregate_id],
-				votes: (state[aggregate_id].votes || []).concat(payload),
+				...previous,
+				votes,
+				pollResults,
+				totalVotes,
 			},
 		};
 	},

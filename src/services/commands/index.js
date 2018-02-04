@@ -17,6 +17,7 @@ function app({publisher}) {
 	}
 
 	return async (request, response) => {
+		console.info('Command Requested', +Date.now());
 		const command = await json(request);
 		const [statusCode, data] = await routeCommand(command);
 		send(response, statusCode, data);

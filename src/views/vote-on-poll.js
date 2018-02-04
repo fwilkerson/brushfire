@@ -1,7 +1,8 @@
 import {h} from 'muve';
 import {commandTypes} from '../constants';
+import dataService from '../lib/dataService';
 import {joinChannel, leaveChannel} from '../lib/socket';
-import {getModel, setModel} from '../model';
+import {getModel, setModel, setRoute} from '../model';
 
 function setVoteOnPoll(partial, updateType) {
 	const {voteOnPoll} = getModel();
@@ -28,26 +29,21 @@ function submitVote() {
 		},
 	};
 
-	fetch('/api/command', {
-		method: 'POST',
-		headers: {'Content-Type': 'application/json'},
-		body: JSON.stringify(command),
-	})
-		.then(response => response.json())
-		.then(console.log)
+	dataService
+		.postCommand(command)
+		.then(data => {
+			if (data.error) {
+			} else {
+				// we now have the vote, change the ui to viewResults?
+				// viewResults();
+			}
+		})
 		.catch(console.error);
 }
 
 function viewResults() {
 	const {voteOnPoll: {poll}} = getModel();
-	fetch(`/api/poll/votes?aggregateId=${poll.aggregateId}`)
-		.then(response => response.json())
-		.then(data => {
-			if (data.error) {
-			} else {
-				console.log(data);
-			}
-		});
+	setRoute(`/results/${poll.aggregateId}`);
 }
 
 export function didMount() {
@@ -57,12 +53,11 @@ export function didMount() {
 		const {path} = route;
 		const id = path.slice(path.lastIndexOf('/') + 1);
 
-		// tell web socket we want messages for this poll id
+		// tell web socket we want messages for this aggregateId
 		joinChannel(id);
 
-		// Don't query if socket already got the data?
+		// Don't query if socket already got the data
 		if (voteOnPoll.poll.aggregateId !== id) {
-			// there's a chance that this completes before the poll is created
 			fetch(`/api/poll?aggregateId=${id}`)
 				.then(response => response.json())
 				.then(data => {

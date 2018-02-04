@@ -17,7 +17,7 @@ function onReceive(event) {
 	switch (type) {
 		case eventTypes.POLL_VOTED_ON:
 			// TODO: Use case for voting results
-			console.info(type, payload);
+			setModel({viewPollResults: {results: payload}});
 			break;
 		default:
 			console.info(type, payload);

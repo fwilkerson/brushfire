@@ -47,6 +47,28 @@ server.get('/poll/:aggregateId', async (request, response) => {
 	return response.send(html);
 });
 
+server.get('/results/:aggregateId', async (request, response) => {
+	const viewPollResultsPage = require('./views/view-poll-results').default;
+	const {aggregateId} = request.params;
+	const data = await fetch(
+		QUERY_API + '/api/poll/results?aggregateId=' + aggregateId
+	);
+	const pollResults = await data.json();
+	const {viewPollResults} = initialModel;
+	viewPollResults.results = pollResults;
+	const temp = viewPollResultsPage(viewPollResults);
+	const serverView = renderToString(temp);
+
+	const model = {
+		...initialModel,
+		serverViewName: 'view-poll-results',
+		serverView,
+		viewPollResults,
+	};
+	const html = renderHTML(shell(model), model);
+	return response.send(html);
+});
+
 server.get('/*', async (request, response) => {
 	const createPollPage = require('./views/create-poll').default;
 	const serverView = renderToString(

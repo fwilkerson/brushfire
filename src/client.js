@@ -26,6 +26,10 @@ switch (preloadedModel.serverViewName) {
 		setModel({voteOnPoll: preloadedModel.voteOnPoll});
 		import('./views/vote-on-poll').then(renderAsyncView);
 		break;
+	case 'view-poll-results':
+		setModel({viewPollResults: preloadedModel.viewPollResults});
+		import('./views/view-poll-results').then(renderAsyncView);
+		break;
 	default:
 		render(initialModel);
 		break;

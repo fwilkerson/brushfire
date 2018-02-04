@@ -31,6 +31,11 @@ function eventually(aggregateId) {
 }
 
 export default {
+	get(route) {
+		return fetch(route)
+			.then(response => response.json())
+			.catch(console.error);
+	},
 	postCommand(command) {
 		const options = {
 			method: 'POST',

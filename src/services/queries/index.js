@@ -17,6 +17,7 @@ function publishClientMessage(aggregateId, {type}) {
 				socket.send(JSON.stringify({type, payload: state[aggregateId]}));
 			}
 		});
+		console.info('All Clients Updated', +Date.now());
 	}
 }
 
@@ -35,9 +36,10 @@ function app() {
 							{error: `No poll with with the given id (${query.aggregateId})`},
 						];
 				break;
-			case '/api/poll/votes':
+			case '/api/poll/results':
+				// in future return a limited result set insead of entire poll object
 				result = state[query.aggregateId]
-					? [200, state[query.aggregateId].votes]
+					? [200, state[query.aggregateId]]
 					: [
 							404,
 							{error: `No poll with with the given id (${query.aggregateId})`},

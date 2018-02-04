@@ -27,11 +27,20 @@ const asyncVoteOnPoll = model => (
 	/>
 );
 
+const asyncViewPollResults = model => (
+	<AsyncView
+		{...getDefaultProps(model)}
+		importView={() => import('./view-poll-results')}
+		model={model.viewPollResults}
+	/>
+);
+
 export const shell = model => (
 	<main class="container">
 		<Router model={model} routeChanged={handleRouteChanged}>
 			<Route exact path="/" view={asyncCreatePoll} />
 			<Route path="/poll/:id" view={asyncVoteOnPoll} />
+			<Route path="/results/:id" view={asyncViewPollResults} />
 		</Router>
 	</main>
 );

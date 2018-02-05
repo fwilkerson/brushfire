@@ -3,13 +3,68 @@
 	"version": "1.0.0",
 	"main": "index.js",
 	"license": "MIT",
-	"devDependencies": {
-		"concurrently": "^3.5.1",
-		"prettier": "^1.9.2"
-	},
 	"scripts": {
-		"start-client": "cd packages/client && yarn start",
-		"start-api":
-			"concurrently -k -n \"COMMAND,QUERY\" -c \"cyan,magenta\" \"cd packages/command && yarn dev\" \"cd packages/query && yarn dev\""
+		"build": "webpack --config ./config/webpack.config.js",
+		"dev": "nodemon",
+		"start": "set NODE_ENV=production&& node index.js"
+	},
+	"dependencies": {
+		"babel-register": "^6.26.0",
+		"compression": "^1.7.1",
+		"dotenv": "^5.0.0",
+		"express": "^4.16.2",
+		"helmet": "^3.9.0",
+		"http-proxy-middleware": "^0.17.4",
+		"micro": "^9.1.0",
+		"morgan": "^1.9.0",
+		"muve": "^1.0.2",
+		"node-fetch": "^1.7.3",
+		"persevere-io": "^0.2.0",
+		"pg": "^7.4.1",
+		"sockette": "^1.2.0",
+		"uuid": "^3.2.1",
+		"ws": "^4.0.0",
+		"zeromq": "^4.6.0"
+	},
+	"devDependencies": {
+		"babel-cli": "^6.26.0",
+		"babel-loader": "^7.1.2",
+		"babel-minify-webpack-plugin": "^0.2.0",
+		"babel-plugin-dynamic-import-webpack": "^1.0.2",
+		"babel-plugin-transform-object-rest-spread": "^6.26.0",
+		"babel-plugin-transform-react-jsx": "^6.24.1",
+		"babel-preset-env": "^1.6.1",
+		"nodemon": "^1.14.7",
+		"prettier": "^1.9.2",
+		"webpack": "^3.10.0",
+		"webpack-dev-middleware": "^2.0.3"
+	},
+	"babel": {
+		"presets": [
+			[
+				"env",
+				{
+					"targets": {
+						"node": "current"
+					}
+				}
+			]
+		],
+		"plugins": [
+			[
+				"transform-react-jsx",
+				{
+					"pragma": "h"
+				}
+			],
+			"dynamic-import-webpack",
+			"transform-object-rest-spread"
+		]
+	},
+	"prettier": {
+		"bracketSpacing": false,
+		"singleQuote": true,
+		"trailingComma": "es5",
+		"useTabs": true
 	}
 }

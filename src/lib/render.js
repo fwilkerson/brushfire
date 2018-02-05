@@ -60,6 +60,12 @@ export const renderHTML = (vdom, serverModel) => {
 		<link rel="stylesheet" href="skeleton.css">
 		<link rel="icon" type="image/png" href="favicon.png">
 		<style>
+			body {
+				background-color: #f8f8f8;
+			}
+			#root input {
+				background-color: #f8f8f8;
+			}
 			.container {
 				max-width: 640px;
 				padding-top: 10vh;
@@ -137,6 +143,32 @@ export const renderHTML = (vdom, serverModel) => {
 			}
 			.control--checkbox input:disabled ~ .control__indicator:after {
 				border-color: #7b7b7b;
+			}
+			.horizontal.progress-bar {
+				height: 4.5rem;
+				width: 100%;
+				padding: 1.5rem 0;
+			}			
+			.horizontal .progress-track {
+				position: relative;
+				width: 100%;
+				height: 2rem;
+				background: #ebebeb;
+			}			
+			.horizontal .progress-fill {
+				position: relative;
+				background: #33c3f0;
+				height: 2rem;
+				width: 50%;
+				color: #fff;
+				text-align: center;
+				font-size: 12px;
+				line-height: 2rem;
+			}
+			.rounded .progress-track,
+			.rounded .progress-fill {
+				border-radius: 3px;
+				box-shadow: inset 0 0 5px rgba(0,0,0,.2);
 			}
 		</style>
 	</head>

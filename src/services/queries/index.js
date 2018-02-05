@@ -17,7 +17,6 @@ function publishClientMessage(aggregateId, {type}) {
 				socket.send(JSON.stringify({type, payload: state[aggregateId]}));
 			}
 		});
-		console.info('All Clients Updated', +Date.now());
 	}
 }
 

@@ -6,7 +6,7 @@ export const initialModel = {
 		pollOptions: ['', '', ''],
 	},
 	viewPollResults: {
-		results: {totalVotes: 0, pollQuestion: '', pollResults: []},
+		results: {totalVotes: 0, pollQuestion: '', pollResults: {}},
 	},
 	voteOnPoll: {poll: {pollQuestion: '', pollOptions: []}},
 	activeView: null,

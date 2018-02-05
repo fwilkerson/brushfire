@@ -17,8 +17,13 @@ const wsProxy = proxy(`ws://localhost:${process.env.QUERIES_PORT}/web-socket`);
 
 const server = express();
 
+if (process.env.NODE_ENV !== 'production') {
+	server.use(
+		webpackMiddleware(webpack(webpackConfig), {stats: {colors: true}})
+	);
+}
+
 server.use(compression());
-server.use(webpackMiddleware(webpack(webpackConfig), {stats: {colors: true}}));
 server.use(express.static('public'));
 server.use(helmet());
 

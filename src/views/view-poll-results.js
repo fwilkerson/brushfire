@@ -10,7 +10,7 @@ function setViewPollResults(partial, updateType) {
 }
 
 export function didMount() {
-	const {route} = getModel();
+	const {route, viewPollResults} = getModel();
 
 	if (route) {
 		const {path} = route;
@@ -19,12 +19,15 @@ export function didMount() {
 		// tell web socket we want messages for this aggregateId
 		joinChannel(id);
 
-		dataService
-			.get(`/api/poll/results?aggregateId=${id}`)
-			.then(data => {
-				setViewPollResults({results: data});
-			})
-			.catch(console.error);
+		// if server rendered, we may already have the data
+		if (viewPollResults.results.aggregateId !== id) {
+			dataService
+				.get(`/api/poll/results?aggregateId=${id}`)
+				.then(data => {
+					setViewPollResults({results: data});
+				})
+				.catch(console.error);
+		}
 	}
 }
 
@@ -34,25 +37,35 @@ export function didUnmount() {
 	if (viewPollResults.aggregateId) {
 		leaveChannel(viewPollResults.aggregateId);
 	}
-	setViewPollResults({totalVotes: 0, pollQuestion: '', pollResults: []});
+	setViewPollResults({totalVotes: 0, pollQuestion: '', pollResults: {}});
 }
 
 const styles = {
 	right: {textAlign: 'right'},
 };
 
+const getPercentage = (numberOfVotes, totalVotes) => {
+	return (numberOfVotes / totalVotes * 100).toFixed(0) + '%';
+};
+
 export default ({results}) => (
 	<section>
 		<h3>{results.pollQuestion}</h3>
-		<ul>
-			{results.pollResults.map(answer => (
-				<li>
-					{answer.value}: <strong>{answer.percentage}</strong>
-				</li>
-			))}
-		</ul>
-		<h5 style={styles.right}>
+		{Object.values(results.pollResults).map(answer => {
+			const percent = getPercentage(answer.numberOfVotes, results.totalVotes);
+			return (
+				<div class="progress-bar horizontal rounded">
+					<em>{answer.value}</em>
+					<div class="progress-track">
+						<div class="progress-fill" style={{width: percent}}>
+							<span>{percent}</span>
+						</div>
+					</div>
+				</div>
+			);
+		})}
+		<h6 style={styles.right}>
 			Total Votes: <em>{results.totalVotes}</em>
-		</h5>
+		</h6>
 	</section>
 );

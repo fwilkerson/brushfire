@@ -4,7 +4,9 @@
 	"main": "index.js",
 	"license": "MIT",
 	"scripts": {
-		"dev": "nodemon"
+		"build": "webpack --config ./config/webpack.config.js",
+		"dev": "nodemon",
+		"start": "set NODE_ENV=production&& node index.js"
 	},
 	"dependencies": {
 		"babel-register": "^6.26.0",
@@ -27,6 +29,7 @@
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
 		"babel-loader": "^7.1.2",
+		"babel-minify-webpack-plugin": "^0.2.0",
 		"babel-plugin-dynamic-import-webpack": "^1.0.2",
 		"babel-plugin-transform-object-rest-spread": "^6.26.0",
 		"babel-plugin-transform-react-jsx": "^6.24.1",

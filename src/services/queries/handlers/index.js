@@ -4,48 +4,39 @@ import {count} from '../../../utils';
 const eventHandlers = {
 	[eventTypes.POLL_CREATED]: (state, event) => {
 		const {aggregate_id, event_id, created_at, payload} = event;
+		const pollOptions = [];
+		const pollResults = {};
+		payload.pollOptions.forEach((option, i) => {
+			pollOptions.push({key: i, value: option, selected: false});
+			pollResults[i] = {key: i, value: option, numberOfVotes: 0};
+		});
 		return {
 			...state,
 			[aggregate_id]: {
 				aggregateId: aggregate_id,
-				version: event_id,
-				pollQuestion: payload.pollQuestion,
-				// build the model the view needs here
-				pollOptions: payload.pollOptions.map((option, i) => ({
-					key: i,
-					value: option,
-					selected: false,
-				})),
 				createdAt: created_at,
+				pollOptions,
+				pollQuestion: payload.pollQuestion,
+				pollResults,
+				totalVotes: 0,
+				version: event_id,
 			},
 		};
 	},
 	[eventTypes.POLL_VOTED_ON]: (state, event) => {
 		const {aggregate_id, event_id, created_at, payload} = event;
-		const previous = state[aggregate_id];
-		const votes = (previous.votes || []).concat(payload);
-		const totalVotes = votes.length;
-		const pollResults = previous.pollOptions.reduce((results, option) => {
-			// find all votes for the given option
-			const numberOfVotes = count(votes, vote => {
-				return vote.selectedOptions.some(x => x.key === option.key);
-			});
-			results.push({
-				key: option.key,
-				value: option.value,
-				numberOfVotes,
-				percentage: (numberOfVotes / totalVotes * 100).toFixed(0) + '%',
-			});
-			return results;
-		}, []);
+		let {pollResults, totalVotes} = state[aggregate_id];
+		totalVotes += 1;
+		payload.selectedOptions.forEach(option => {
+			const previous = pollResults[option.key];
+			pollResults[option.key] = {
+				...pollResults[option.key],
+				numberOfVotes: previous.numberOfVotes + 1,
+			};
+		});
 		return {
 			...state,
-			[aggregate_id]: {
-				...previous,
-				votes,
-				pollResults,
-				totalVotes,
-			},
+			[aggregate_id]: {...state[aggregate_id], pollResults, totalVotes},
 		};
 	},
 };
